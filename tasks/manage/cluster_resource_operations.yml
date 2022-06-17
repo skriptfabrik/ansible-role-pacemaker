@@ -1,0 +1,7 @@
+---
+- name: manage cluster resource operation
+  loop: "{{ cluster_resource.operations }}"
+  loop_control:
+    loop_var: cluster_resource_operation
+    label: "{{ cluster_resource_operation.name }}"
+  ansible.builtin.include_tasks: cluster_resource_operation.yml
