@@ -1,0 +1,12 @@
+---
+# don't use `pcs resource {{ cluster_resource.resource_id }}`
+# if the resource is offline, the command ends with an exit code != 0
+- name: capturing cluster resource
+  ansible.builtin.shell: |
+    set -o pipefail
+    pcs resource | grep {{ cluster_resource.resource_id }}
+  args:
+    executable: /usr/bin/bash
+  register: _pcs_resource_show
+  changed_when: false
+  failed_when: false

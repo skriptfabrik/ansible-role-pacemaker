@@ -1,0 +1,11 @@
+---
+# Defines the number of nodes to be functional in order to avoid split-brain
+# scenarios...ex. 2-nodes = 1, 3-nodes = 2
+corosync_expected_votes: "{{ ( groups[pacemaker_cluster_group] | count /2 ) | round (0, 'ceil') | int }}"
+
+# Defines if host is considered to be primary
+pacemaker_primary_server: "{{ groups[pacemaker_cluster_group][0] }}"
+
+pacemaker_static_cluster_properties:
+  - name: stonith-enabled
+    value: false

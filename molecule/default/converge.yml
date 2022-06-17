@@ -1,0 +1,124 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Install nginx on Debian/Ubuntu
+      ansible.builtin.apt:
+        name:
+          - nginx
+        update_cache: true
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: First Converge
+  hosts: all
+  vars:
+    pacemaker_cluster_group: all
+    corosync_bindnet_interface: eth0
+    pacemaker_cluster_resources:
+      - resource_id: clusterIp
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.10.10.10
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: publicIp_10.11.11.11
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.11.11.11
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: publicIp_10.12.12.12
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.12.12.12
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: serviceNginx
+        provider: lsb:nginx
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+        test_command: nginx -t
+    pacemaker_cluster_constraints:
+      - type: colocation
+        colocation:
+          source_resource_id: publicIp_10.11.11.11
+          target_resource_id: clusterIp
+      - type: colocation
+        colocation:
+          source_resource_id: publicIp_10.12.12.12
+          target_resource_id: clusterIp
+      - type: order
+        order:
+          first_resource: publicIp_10.11.11.11
+          first_resource_action: start
+          second_resource: serviceNginx
+      - type: order
+        order:
+          first_resource: publicIp_10.12.12.12
+          first_resource_action: start
+          second_resource: serviceNginx
+
+  roles:
+    - role: skriptfabrik.pacemaker
+
+- name: Second Converge
+  hosts: all
+  vars:
+    pacemaker_cluster_group: all
+    corosync_bindnet_interface: eth0
+    pacemaker_cluster_resources:
+      - resource_id: clusterIp
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.10.10.10
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: publicIp_10.11.11.11
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.11.11.11
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: publicIp_10.12.12.12
+        state: absent
+        provider: ocf:heartbeat:IPaddr2
+        options:
+          - ip=10.12.12.12
+          - cidr_netmask=32
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+      - resource_id: serviceNginx
+        provider: lsb:nginx
+        operations:
+          - name: monitor
+            options:
+              - interval=10s
+        test_command: nginx -t
+    pacemaker_cluster_constraints:
+      - type: colocation
+        colocation:
+          state: absent
+          source_resource_id: publicIp_10.11.11.11
+          target_resource_id: clusterIp
+
+  roles:
+    - role: skriptfabrik.pacemaker

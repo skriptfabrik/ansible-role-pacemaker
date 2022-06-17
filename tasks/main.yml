@@ -1,0 +1,12 @@
+---
+- name: determine primary node
+  ansible.builtin.import_tasks: cluster/determine_primary_node.yml
+
+- name: install components
+  ansible.builtin.import_tasks: install.yml
+
+- name: configure corosync
+  ansible.builtin.import_tasks: config.yml
+
+- name: configure cluster
+  ansible.builtin.import_tasks: cluster.yml

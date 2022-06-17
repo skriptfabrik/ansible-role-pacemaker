@@ -1,0 +1,28 @@
+---
+- name: capturing cluster order constraint
+  ansible.builtin.shell: |
+    set -o pipefail
+    pcs constraint order show --full | grep -E "(id:order-${FILTER}-.+))"
+  args:
+    executable: /usr/bin/bash
+  environment:
+    FILTER: >-
+      {{ cluster_constraint.order.first_resource_action }}
+      {{ cluster_constraint.order.first_resource }}
+      then
+      {{ cluster_constraint.order.second_resource_action | default(cluster_constraint.order.first_resource_action) }}
+      {{ cluster_constraint.order.second_resource }}
+  register: _pcs_order_constraint_show
+  changed_when: false
+  failed_when: false
+
+- name: ensure cluster order constraint exists
+  when: _pcs_order_constraint_show.rc != 0
+  ansible.builtin.command: >
+    pcs constraint order
+      {{ cluster_constraint.order.first_resource_action }}
+      {{ cluster_constraint.order.first_resource }}
+      then
+      {{ cluster_constraint.order.second_resource_action | default('') }}
+      {{ cluster_constraint.order.second_resource }}
+      {{ cluster_constraint.order.options | default([]) | join(' ') }}

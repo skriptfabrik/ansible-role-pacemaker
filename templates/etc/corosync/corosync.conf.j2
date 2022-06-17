@@ -1,0 +1,57 @@
+{{ ansible_managed | comment }}
+
+totem {
+    version: 2
+    cluster_name: {{ corosync_cluster_name }}
+    token: 3000
+    token_retransmits_before_loss_const: 10
+    clear_node_high_bit: yes
+    crypto_cipher: none
+    crypto_hash: none
+    transport: udpu
+    interface {
+        ringnumber: 0
+        bindnetaddr: {{ corosync_bindnet_addr }}
+        broadcast: yes
+        mcastport: 5405
+        ttl: 1
+    }
+}
+
+quorum {
+    provider: corosync_votequorum
+{% if (groups[pacemaker_cluster_group] | count) == 2 %}
+    two_node: 1
+    expected_votes: 2
+{% else %}
+    expected_votes: {{ corosync_expected_votes }}
+    wait_for_all: 1
+    last_man_standing: 1
+    last_man_standing_window: 10000
+{% endif %}
+}
+
+nodelist{
+{% for host in groups[pacemaker_cluster_group] %}
+    node {
+        ring0_addr: {{ hostvars[host]['corosync_bindnet_addr'] }}
+        name: {{ host }}
+        nodeid: {{ loop.index }}
+    }
+{% endfor %}
+}
+
+logging {
+    fileline: off
+    to_stderr: no
+    to_logfile: yes
+    logfile: {{ corosync_log_file }}
+    to_syslog: yes
+    syslog_facility: daemon
+    debug: off
+    timestamp: on
+    logger_subsys {
+        subsys: QUORUM
+        debug: off
+    }
+}
