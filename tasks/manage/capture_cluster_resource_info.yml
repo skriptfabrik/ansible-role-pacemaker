@@ -6,7 +6,7 @@
     set -o pipefail
     pcs resource | grep {{ cluster_resource.resource_id }}
   args:
-    executable: /usr/bin/bash
+    executable: /bin/bash
   register: _pcs_resource_show
   changed_when: false
   failed_when: false

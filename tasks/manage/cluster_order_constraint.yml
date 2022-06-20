@@ -4,7 +4,7 @@
     set -o pipefail
     pcs constraint order show --full | grep -E "(id:order-${FILTER}-.+))"
   args:
-    executable: /usr/bin/bash
+    executable: /bin/bash
   environment:
     FILTER: >-
       {{ cluster_constraint.order.first_resource_action }}

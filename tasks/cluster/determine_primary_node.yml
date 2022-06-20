@@ -4,7 +4,7 @@
     set -o pipefail
     pcs resource show | head -n1 | rev | cut -d ' ' -f1 | rev
   args:
-    executable: /usr/bin/bash
+    executable: /bin/bash
   changed_when: false
   register: _recource_node
   failed_when: false

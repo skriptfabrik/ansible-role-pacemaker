@@ -4,7 +4,7 @@
      set -o pipefail
      pcs constraint colocation show --full | grep -E "(id:colocation-${FILTER}-.+)"
   args:
-    executable: /usr/bin/bash
+    executable: /bin/bash
   environment:
     FILTER: >-
       {{ cluster_constraint.colocation.source_resource_id }}-{{ cluster_constraint.colocation.target_resource_id }}
