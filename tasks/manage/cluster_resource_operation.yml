@@ -9,7 +9,9 @@
       {{ cluster_resource_operation.name }}
 
 - name: handle present state
-  when: cluster_resource_operation.state | default('present') | lower == 'present'
+  when:
+    - cluster_resource_operation.state | default('present') | lower == 'present'
+    - _pcs_resource_config.stdout is not search('Stopped')
   block:
     - name: update cluster resource operations
       when: (' ' ~ cluster_resource_operation.name) in _pcs_resource_config.stdout
