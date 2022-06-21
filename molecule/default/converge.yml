@@ -1,14 +1,4 @@
 ---
-- name: Prepare
-  hosts: all
-  tasks:
-    - name: Install nginx on Debian/Ubuntu
-      ansible.builtin.apt:
-        name:
-          - nginx
-        update_cache: true
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
 - name: First Converge
   hosts: all
   vars:
