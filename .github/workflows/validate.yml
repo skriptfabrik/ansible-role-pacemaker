@@ -1,8 +1,7 @@
 ---
-name: Ansible Lint
+name: Validate and test role
 on:
   - push
-  - pull_request
 
 jobs:
   lint:
