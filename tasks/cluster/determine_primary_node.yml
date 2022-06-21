@@ -1,0 +1,23 @@
+---
+- name: fetch node name from resource status
+  ansible.builtin.shell: |
+    set -o pipefail
+    pcs resource show | head -n1 | rev | cut -d ' ' -f1 | rev
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: _recource_node
+  failed_when: false
+
+- name: update primary server variabel
+  when:
+    - not ansible_check_mode
+    - _recource_node.rc == 0
+    - _recource_node.stdout in hostvars
+  ansible.builtin.set_fact:
+    pacemaker_primary_server: "{{ _recource_node.stdout }}"
+  changed_when: false
+
+- name: show primary node value
+  ansible.builtin.debug:
+    msg: "{{ pacemaker_primary_server }}"

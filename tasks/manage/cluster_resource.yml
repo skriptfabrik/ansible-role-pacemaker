@@ -1,0 +1,45 @@
+---
+- name: capturing cluster resource information
+  ansible.builtin.include_tasks: capture_cluster_resource_info.yml
+
+- name: ensure cluster resource does not exists
+  when:
+    - cluster_resource.state | default('present') | lower == 'absent'
+    - _pcs_resource_config.rc == 0
+  ansible.builtin.command: pcs resource delete {{ cluster_resource.resource_id }} --force
+
+- name: handle present state
+  when: cluster_resource.state | default('present') | lower == 'present'
+  block:
+    - name: handle new cluster resource
+      when: _pcs_resource_config.rc != 0
+      block:
+        - name: ensure cluster resource exists
+          register: _pcs_resource_create
+          changed_when: _pcs_resource_create.rc == 0
+          failed_when: _pcs_resource_create.rc != 0
+          ansible.builtin.command: >
+            pcs resource create
+              {{ cluster_resource.resource_id }}
+              {{ cluster_resource.provider }}
+              {{ cluster_resource.options | default([]) | join(' ') }}
+
+        - name: recapturing cluster resource information
+          ansible.builtin.include_tasks: capture_cluster_resource_info.yml
+
+    - name: ensure cluster resource is configured properly
+      when: _pcs_resource_config.rc == 0
+      block:
+        - name: ensure cluster resource options are set properly
+          when:
+            - cluster_resource.options is defined
+            - "('Attributes: ' ~ cluster_resource.options | join(' ')) not in _pcs_resource_config.stdout"
+          ansible.builtin.command: pcs resource update {{ cluster_resource.resource_id }} {{ cluster_resource.options | default([]) | join(' ') }}
+
+        - name: ensure cluster resource operations are configured properly
+          when: cluster_resource.operations is defined
+          ansible.builtin.include_tasks: cluster_resource_operations.yml
+
+        - name: ensure cluster resource stickiness is configured properly
+          when: (' resource-stickiness=' ~ cluster_resource.stickiness | default(0)) not in _pcs_resource_config.stdout
+          ansible.builtin.command: pcs resource meta {{ cluster_resource.resource_id }} resource-stickiness={{ cluster_resource.stickiness | default(0) }}

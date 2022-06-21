@@ -1,0 +1,42 @@
+---
+- name: get pcs version
+  ansible.builtin.command: pcs --version
+  register: _pcs_version
+  changed_when: false
+  failed_when: false
+
+- name: pcs version < 0.10.0
+  when: _pcs_version.stdout is version('0.10.0', '<')
+  block:
+    - name: capturing cluster resource (<0.10.0)
+      ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
+      register: _try_pcs_resource_show
+      changed_when: false
+      failed_when: false
+
+    - name: try capturing stopped cluster resource (<0.10.0)
+      when: _try_pcs_resource_show.rc != 0
+      block:
+        - name: capturing stopped cluster resource
+          ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
+          register: _try_pcs_resource_show_stopped
+          changed_when: false
+          failed_when: false
+
+- name: pcs version >= 0.10.0
+  when: _pcs_version.stdout is version('0.10.0', '>=')
+  block:
+    - name: capturing cluster resource (>=0.10.0)
+      ansible.builtin.command: pcs resource config {{ cluster_resource.resource_id }}
+      register: _try_pcs_resource_config
+      changed_when: false
+      failed_when: false
+
+- name: update _pcs_resource_config
+  ansible.builtin.set_fact:
+    _pcs_resource_config: "{{
+      _try_pcs_resource_config if not _try_pcs_resource_config is skipped else
+      _try_pcs_resource_show_stopped if not _try_pcs_resource_show_stopped is skipped else
+      _try_pcs_resource_show if not _try_pcs_resource_show is skipped else
+      { rc: 1, stdout: ''}
+    }}"

@@ -1,0 +1,28 @@
+---
+- name: ensure cluster resource operation does not exists
+  when:
+    - cluster_resource_operation.state | default('present') | lower == 'absent'
+    - (' ' ~ cluster_resource_operation.name) in _pcs_resource_config.stdout
+  ansible.builtin.command: >
+    pcs resource op remove
+      {{ cluster_resource.resource_id }}
+      {{ cluster_resource_operation.name }}
+
+- name: handle present state
+  when:
+    - cluster_resource_operation.state | default('present') | lower == 'present'
+    - _pcs_resource_config.stdout is not search('Stopped')
+  block:
+    - name: update cluster resource operations
+      when: (' ' ~ cluster_resource_operation.name) in _pcs_resource_config.stdout
+      ansible.builtin.command: >
+        pcs resource update
+          {{ cluster_resource.resource_id }}
+          op {{ cluster_resource_operation.name }} {{ cluster_resource_operation.options | default([]) | join(' ') }}
+
+    - name: add cluster resource operations
+      when: (' ' ~ cluster_resource_operation.name) not in _pcs_resource_config.stdout
+      ansible.builtin.command: >
+        pcs resource op add
+          {{ cluster_resource.resource_id }}
+          {{ cluster_resource_operation.name }} {{ cluster_resource_operation.options | default([]) | join(' ') }}

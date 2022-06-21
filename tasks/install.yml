@@ -1,0 +1,40 @@
+---
+- name: install ha manager
+  ansible.builtin.apt:
+    name:
+      - cluster-glue
+      - corosync
+      - crmsh
+      - fence-agents
+      - pacemaker
+      - pcs
+      - resource-agents
+    state: present
+    update_cache: true
+
+- name: looking for existing {{ corosync_authkey_file }}
+  ansible.builtin.stat:
+    path: "{{ corosync_authkey_file }}"
+  register: _corosync_authkey
+
+- name: generating corosync authkey
+  when:
+    - not _corosync_authkey['stat']['exists']
+    - inventory_hostname == pacemaker_primary_server
+  block:
+    - name: installing haveged on {{ pacemaker_primary_server }}
+      ansible.builtin.apt:
+        name: haveged
+        state: present
+
+    - name: generating corosync authkey on {{ pacemaker_primary_server }}
+      register: _corosync_keygen
+      changed_when: _corosync_keygen.rc == 0
+      failed_when: _corosync_keygen.rc != 0
+      ansible.builtin.command: corosync-keygen
+
+    - name: removing haveged from {{ pacemaker_primary_server }}
+      ansible.builtin.apt:
+        name: haveged
+        purge: true
+        state: absent

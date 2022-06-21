@@ -1,0 +1,41 @@
+---
+# Defines auth key file path
+corosync_authkey_file: /etc/corosync/authkey
+
+# Defines interface used for cluster
+# corosync_bindnet_interface: eth0
+
+# Corosync itself works without a cluster name, but DLM needs one.
+corosync_cluster_name: corosync-cluster
+
+# Defines corosync config file path
+corosync_config_file: /etc/corosync/corosync.conf
+
+# Defines log file path
+corosync_log_file: /var/log/corosync/corosync.log
+
+# Defines the clusters host group name
+# pacemaker_cluster_group: ha_cluster
+
+# Define cluster constraints
+pacemaker_cluster_constraints: []
+# - type: colocation
+#   colocation:
+#     state: present
+#     source_resource_id: webserver
+#     target_resource_id: virtual_ip
+#     score: INFINITY
+# - type: order
+#   order:
+#     first_resource: virtual_ip
+#     first_resource_action: start
+#     second_resource: webserver
+#     second_resource_action: start
+#     options:
+#       - kind=Mandatory
+
+# Define cluster resources
+pacemaker_cluster_resources: []
+
+# Define specific cluster settings to configure
+pacemaker_cluster_properties: []

@@ -1,0 +1,33 @@
+---
+- name: capturing cluster colocation constraint
+  ansible.builtin.shell: |
+     set -o pipefail
+     pcs constraint colocation show --full | grep -E "(id:colocation-${FILTER}-.+)"
+  args:
+    executable: /bin/bash
+  environment:
+    FILTER: >-
+      {{ cluster_constraint.colocation.source_resource_id }}-{{ cluster_constraint.colocation.target_resource_id }}
+  register: _pcs_colocation_constraint_show
+  changed_when: false
+  failed_when: false
+
+- name: ensure cluster colocation constraint exists
+  when:
+    - cluster_constraint.colocation.state | default('present') | lower == 'present'
+    - _pcs_colocation_constraint_show.rc != 0
+  ansible.builtin.command: >
+    pcs constraint colocation add
+      {{ cluster_constraint.colocation.source_resource_id }}
+      with
+      {{ cluster_constraint.colocation.target_resource_id }}
+      {{ cluster_constraint.colocation.score | default('INFINITY') }}
+
+- name: ensure cluster colocation constraint does not exists
+  when:
+    - cluster_constraint.colocation.state | default('present') | lower == 'absent'
+    - _pcs_colocation_constraint_show.rc == 0
+  ansible.builtin.command: >
+    pcs constraint colocation remove
+      {{ cluster_constraint.colocation.source_resource_id }}
+      {{ cluster_constraint.colocation.target_resource_id }}

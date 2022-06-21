@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  role_name: pacemaker
+  description: HA Cluster manager configuration with pacemaker and corosync
+  author: Frank Giesecke
+  company: skriptfabrik GmbH
+  license: MIT
+  min_ansible_version: '2.9'
+  platforms:
+    - name: Debian
+      versions:
+        - stretch
+        - buster
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+        - jammy
+  galaxy_tags:
+    - ha
+    - cluster
+    - pacemaker
+    - corosync
+
+dependencies: []
