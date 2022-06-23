@@ -2,11 +2,11 @@
 - name: capturing cluster order constraint
   ansible.builtin.shell: |
     set -o pipefail
-    pcs constraint order show --full | grep -E "(id:order-${FILTER}-.+)"
+    pcs constraint order show --full | grep -E "(id:order-{{ _oder_filter }}-.+)"
   args:
     executable: /bin/bash
-  environment:
-    FILTER: >-
+  vars:
+    _oder_filter: >-
       {{ cluster_constraint.order.first_resource_action }}-{{ cluster_constraint.order.second_resource }}
   register: _pcs_order_constraint_show
   changed_when: false
