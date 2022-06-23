@@ -1,12 +1,12 @@
 ---
 - name: capturing cluster colocation constraint
   ansible.builtin.shell: |
-     set -o pipefail
-     pcs constraint colocation show --full | grep -E "(id:colocation-${FILTER}-.+)"
+    set -o pipefail
+    pcs constraint colocation show --full | grep -E "(id:colocation-{{ _colocation_filter }}-.+)"
   args:
     executable: /bin/bash
-  environment:
-    FILTER: >-
+  vars:
+    _colocation_filter: >-
       {{ cluster_constraint.colocation.source_resource_id }}-{{ cluster_constraint.colocation.target_resource_id }}
   register: _pcs_colocation_constraint_show
   changed_when: false
