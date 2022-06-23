@@ -7,7 +7,7 @@
     executable: /bin/bash
   vars:
     _oder_filter: >-
-      {{ cluster_constraint.order.first_resource_action }}-{{ cluster_constraint.order.second_resource }}
+      {{ cluster_constraint.order.first_resource }}-{{ cluster_constraint.order.second_resource }}
   register: _pcs_order_constraint_show
   changed_when: false
   failed_when: false
