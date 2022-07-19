@@ -1,7 +1,12 @@
 ---
 name: Validate and test role
 on:
-  - push
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   lint:
