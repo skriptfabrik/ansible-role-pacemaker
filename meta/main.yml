@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   role_name: pacemaker
+  namespace: skriptfabrik
   description: HA Cluster manager configuration with pacemaker and corosync
   author: Frank Giesecke
   company: skriptfabrik GmbH
