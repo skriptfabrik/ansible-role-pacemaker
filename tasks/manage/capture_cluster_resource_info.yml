@@ -4,6 +4,7 @@
   register: _pcs_version
   changed_when: false
   failed_when: false
+  check_mode: false
 
 - name: pcs version < 0.10.0
   when: _pcs_version.stdout is version('0.10.0', '<')
@@ -13,6 +14,7 @@
       register: _try_pcs_resource_show
       changed_when: false
       failed_when: false
+      check_mode: false
 
     - name: try capturing stopped cluster resource (<0.10.0)
       when: _try_pcs_resource_show.rc != 0
@@ -22,6 +24,7 @@
           register: _try_pcs_resource_show_stopped
           changed_when: false
           failed_when: false
+          check_mode: false
 
 - name: pcs version >= 0.10.0
   when: _pcs_version.stdout is version('0.10.0', '>=')
@@ -31,6 +34,7 @@
       register: _try_pcs_resource_config
       changed_when: false
       failed_when: false
+      check_mode: false
 
 - name: update _pcs_resource_config
   ansible.builtin.set_fact:
