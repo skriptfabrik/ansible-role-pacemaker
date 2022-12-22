@@ -1,10 +1,10 @@
 ---
-- name: restart corosync
+- name: Restart corosync
   ansible.builtin.service:
     name: corosync
     state: restarted
 
-- name: restart pacemaker
+- name: Restart pacemaker
   ansible.builtin.service:
     name: pacemaker
     sleep: 10

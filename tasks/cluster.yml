@@ -1,15 +1,15 @@
 ---
-- name: run tasks on primary
+- name: Run tasks on primary
   when: inventory_hostname == pacemaker_primary_server
   block:
-    - name: manage cluster properties
+    - name: Manage cluster properties
       loop: "{{ pacemaker_static_cluster_properties + pacemaker_cluster_properties | default([]) }}"
       loop_control:
         loop_var: cluster_property
         label: "{{ cluster_property.name }}"
       ansible.builtin.include_tasks: manage/cluster_property.yml
 
-    - name: manage cluster resource
+    - name: Manage cluster resource
       when: pacemaker_cluster_resources is defined
       loop: "{{ pacemaker_cluster_resources }}"
       loop_control:
@@ -17,19 +17,19 @@
         label: "{{ cluster_resource.resource_id }}"
       ansible.builtin.include_tasks: manage/cluster_resource.yml
 
-    - name: manage cluster constraints
+    - name: Manage cluster constraints
       when: pacemaker_cluster_constraints is defined
       loop: "{{ pacemaker_cluster_constraints }}"
       loop_control:
         loop_var: cluster_constraint
       ansible.builtin.include_tasks: manage/cluster_{{ cluster_constraint.type | lower }}_constraint.yml
 
-    - name: finish cluster resources
+    - name: Finish cluster resources
       when: pacemaker_cluster_resources is defined
       block:
         - ansible.builtin.import_tasks: cluster/determine_primary_node.yml
 
-        - name: run test command
+        - name: Run test command
           loop: "{{ pacemaker_cluster_resources }}"
           loop_control:
             loop_var: cluster_resource
@@ -37,16 +37,16 @@
           when: cluster_resource.test_command is defined
           ansible.builtin.command: "{{ cluster_resource.test_command }}"
 
-        - name: restarting cluster service resources
+        - name: Restarting cluster service resources
           loop: "{{ pacemaker_cluster_resources }}"
           loop_control:
             loop_var: cluster_resource
             label: "{{ cluster_resource.resource_id }}"
           when: cluster_resource.resource_id | regex_search('^service.*')
-          ansible.builtin.command: pcs resource restart {{ cluster_resource.resource_id }}
           failed_when: false
+          ansible.builtin.command: pcs resource restart {{ cluster_resource.resource_id }}
 
-        - name: cleaning cluster resource status
+        - name: Cleaning cluster resource status
           register: _pcs_resource_cleanup
           changed_when: _pcs_resource_cleanup.rc == 0
           failed_when: _pcs_resource_cleanup.rc != 0
