@@ -1,42 +1,42 @@
 ---
-- name: get pcs version
-  ansible.builtin.command: pcs --version
+- name: Get pcs version
   register: _pcs_version
   changed_when: false
   failed_when: false
   check_mode: false
+  ansible.builtin.command: pcs --version
 
-- name: pcs version < 0.10.0
+- name: Handle pcs version < 0.10.0
   when: _pcs_version.stdout is version('0.10.0', '<')
   block:
-    - name: capturing cluster resource (<0.10.0)
-      ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
+    - name: Capturing cluster resource (<0.10.0)
       register: _try_pcs_resource_show
       changed_when: false
       failed_when: false
       check_mode: false
+      ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
 
-    - name: try capturing stopped cluster resource (<0.10.0)
+    - name: Try capturing stopped cluster resource (<0.10.0)
       when: _try_pcs_resource_show.rc != 0
       block:
-        - name: capturing stopped cluster resource
-          ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
+        - name: Capturing stopped cluster resource
           register: _try_pcs_resource_show_stopped
           changed_when: false
           failed_when: false
           check_mode: false
+          ansible.builtin.command: pcs resource show {{ cluster_resource.resource_id }}
 
-- name: pcs version >= 0.10.0
+- name: Handle pcs version >= 0.10.0
   when: _pcs_version.stdout is version('0.10.0', '>=')
   block:
-    - name: capturing cluster resource (>=0.10.0)
-      ansible.builtin.command: pcs resource config {{ cluster_resource.resource_id }}
+    - name: Capturing cluster resource (>=0.10.0)
       register: _try_pcs_resource_config
       changed_when: false
       failed_when: false
       check_mode: false
+      ansible.builtin.command: pcs resource config {{ cluster_resource.resource_id }}
 
-- name: update _pcs_resource_config
+- name: Update _pcs_resource_config
   ansible.builtin.set_fact:
     _pcs_resource_config: "{{
       _try_pcs_resource_config if not _try_pcs_resource_config is skipped else
