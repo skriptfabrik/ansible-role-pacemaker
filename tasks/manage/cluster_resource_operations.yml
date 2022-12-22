@@ -1,5 +1,5 @@
 ---
-- name: manage cluster resource operation
+- name: Manage cluster resource operation
   loop: "{{ cluster_resource.operations }}"
   loop_control:
     loop_var: cluster_resource_operation

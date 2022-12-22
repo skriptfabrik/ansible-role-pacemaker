@@ -1,63 +1,63 @@
 ---
-- name: setting facts
+- name: Setting facts
   ansible.builtin.set_fact:
     corosync_bindnet_addr: "{{ hostvars[inventory_hostname]['ansible_' + corosync_bindnet_interface]['ipv4']['address'] }}"
 
-- name: capturing corosync auth key
+- name: Capturing corosync auth key
   when: inventory_hostname == pacemaker_primary_server
-  ansible.builtin.slurp:
-    src: "{{ corosync_authkey_file }}"
   register: _corosync_authkey_
   no_log: true
   changed_when: false
+  ansible.builtin.slurp:
+    src: "{{ corosync_authkey_file }}"
 
-- name: configuring corosync auth on secondaries
+- name: Configuring corosync auth on secondaries
   when: inventory_hostname != pacemaker_primary_server
   block:
-    - name: setting fact for corosync auth key on secondaries
+    - name: Setting fact for corosync auth key on secondaries
       ansible.builtin.set_fact:
         _corosync_authkey_: "{{ hostvars[pacemaker_primary_server]['_corosync_authkey_'] }}"
       no_log: true
 
-    - name: configuring corosync auth key on secondaries
+    - name: Configuring corosync auth key on secondaries
+      no_log: true
       ansible.builtin.template:
         src: etc/corosync/authkey.j2
         dest: "{{ corosync_authkey_file }}"
         owner: root
         group: root
         mode: 0600
-      no_log: true
 
-- name: configuring corosync
+- name: Configuring corosync
+  notify:
+    - restart corosync
+    - restart pacemaker
+  register: _corosync_reconfigured
   ansible.builtin.template:
     src: etc/corosync/corosync.conf.j2
     dest: "{{ corosync_config_file }}"
     owner: root
     group: root
     mode: 0644
+
+- name: Configuring corosync service to start
   notify:
     - restart corosync
     - restart pacemaker
-  register: _corosync_reconfigured
-
-- name: configuring corosync service to start
   ansible.builtin.template:
     src: etc/default/corosync.j2
     dest: /etc/default/corosync
     owner: root
     group: root
     mode: 0644
-  notify:
-    - restart corosync
-    - restart pacemaker
 
-- name: force handlers to run
+- name: Force handlers to run
   ansible.builtin.meta: flush_handlers
 
-- name: ensuring service are enabled
-  ansible.builtin.service:
-    name: "{{ item }}"
-    enabled: true
+- name: Ensuring service are enabled
   loop:
     - corosync
     - pacemaker
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true

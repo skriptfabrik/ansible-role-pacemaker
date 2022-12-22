@@ -27,7 +27,8 @@
     - name: Finish cluster resources
       when: pacemaker_cluster_resources is defined
       block:
-        - ansible.builtin.import_tasks: cluster/determine_primary_node.yml
+        - name: Determine primary node
+          ansible.builtin.import_tasks: cluster/determine_primary_node.yml
 
         - name: Run test command
           loop: "{{ pacemaker_cluster_resources }}"
