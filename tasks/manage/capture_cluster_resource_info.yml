@@ -42,5 +42,5 @@
       _try_pcs_resource_config if not _try_pcs_resource_config is skipped else
       _try_pcs_resource_show_stopped if not _try_pcs_resource_show_stopped is skipped else
       _try_pcs_resource_show if not _try_pcs_resource_show is skipped else
-      { rc: 1, stdout: ''}
+      {rc: 1, stdout: ''}
     }}"
