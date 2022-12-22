@@ -13,7 +13,7 @@
   when:
     - not ansible_check_mode
     - _recource_node.rc == 0
-    - _recource_node.stdout in hostvars
+    - _recource_node.stdout in hostvars.keys()
   ansible.builtin.set_fact:
     pacemaker_primary_server: "{{ _recource_node.stdout }}"
   changed_when: false
