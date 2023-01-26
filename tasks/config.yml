@@ -30,8 +30,8 @@
 
 - name: Configuring corosync
   notify:
-    - restart corosync
-    - restart pacemaker
+    - Restart corosync
+    - Restart pacemaker
   register: _corosync_reconfigured
   ansible.builtin.template:
     src: etc/corosync/corosync.conf.j2
@@ -42,8 +42,8 @@
 
 - name: Configuring corosync service to start
   notify:
-    - restart corosync
-    - restart pacemaker
+    - Restart corosync
+    - Restart pacemaker
   ansible.builtin.template:
     src: etc/default/corosync.j2
     dest: /etc/default/corosync
