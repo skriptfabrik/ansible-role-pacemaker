@@ -12,7 +12,7 @@
   block:
     - name: Fetch node name from resource status
       changed_when: false
-      register: _recource_node
+      register: _resource_node
       failed_when: false
       args:
         executable: /bin/bash
@@ -23,11 +23,11 @@
 
     - name: Update primary server variabel
       when:
-        - _recource_node.rc == 0
-        - _recource_node.stdout in hostvars.keys()
+        - _resource_node.rc == 0
+        - _resource_node.stdout in hostvars.keys()
       changed_when: false
       ansible.builtin.set_fact:
-        pacemaker_primary_server: "{{ _recource_node.stdout }}"
+        pacemaker_primary_server: "{{ _resource_node.stdout }}"
 
 - name: Show primary node value
   ansible.builtin.debug:
