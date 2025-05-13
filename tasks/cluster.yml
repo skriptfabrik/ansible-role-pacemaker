@@ -37,6 +37,9 @@
             label: "{{ cluster_resource.resource_id }}"
           when: cluster_resource.test_command is defined
           ansible.builtin.command: "{{ cluster_resource.test_command }}"
+          changed_when: false
+          failed_when: command_result.rc != 0
+          register: command_result
 
         - name: Restarting cluster service resources
           loop: "{{ pacemaker_cluster_resources }}"
