@@ -21,6 +21,10 @@
         pcs resource {{'show' if _pcs_version.stdout is version('0.10.0', '<') else 'status'}} \
           | head -n1 | rev | cut -d ' ' -f1 | rev
 
+    - name: Debug extracted node
+      ansible.builtin.debug:
+        msg: "Extracted node: {{ _resource_node.stdout }}"
+
     - name: Update primary server variabel
       when:
         - _resource_node.rc == 0
