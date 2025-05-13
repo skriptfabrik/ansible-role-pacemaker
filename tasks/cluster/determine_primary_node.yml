@@ -20,7 +20,7 @@
        set -o pipefail
        pcs resource {{'show' if _pcs_version.stdout is version('0.10.0', '<') else 'status'}}
 
-  - name: Debug extracted node
+    - name: Debug extracted node
       ansible.builtin.debug:
         msg: "Extracted node: {{ _resource_node.stdout }}"
 
