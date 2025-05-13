@@ -49,6 +49,7 @@
           when: cluster_resource.resource_id | regex_search('^service.*')
           failed_when: false
           ansible.builtin.command: pcs resource restart {{ cluster_resource.resource_id }}
+          changed_when: "'Successfully restarted' in command_result.stdout"
 
         - name: Cleaning cluster resource status
           register: _pcs_resource_cleanup
