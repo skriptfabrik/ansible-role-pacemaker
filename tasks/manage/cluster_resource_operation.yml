@@ -1,5 +1,6 @@
 ---
 - name: Ensure cluster resource operation does not exists
+  register: _pcs_resource_op_remove
   when:
     - cluster_resource_operation.state | default('present') | lower == 'absent'
     - (' ' ~ cluster_resource_operation.name) in _pcs_resource_config.stdout
@@ -7,6 +8,7 @@
     pcs resource op remove
       {{ cluster_resource.resource_id }}
       {{ cluster_resource_operation.name }}
+  changed_when: "_pcs_resource_op_remove.rc == 0"
 
 - name: Handle present state
   when:
@@ -14,16 +16,19 @@
     - _pcs_resource_config.stdout is not search('Stopped')
   block:
     - name: Update cluster resource operations
+      register: _pcs_resource_update
       when: (' ' ~ cluster_resource_operation.name) in _pcs_resource_config.stdout
       ansible.builtin.command: >
         pcs resource update
           {{ cluster_resource.resource_id }}
           op {{ cluster_resource_operation.name }} {{ cluster_resource_operation.options | default([]) | join(' ') }}
+      changed_when: "_pcs_resource_update.rc == 0"
 
     - name: Add cluster resource operations
+      register: _pcs_resource_op_add
       when: (' ' ~ cluster_resource_operation.name) not in _pcs_resource_config.stdout
       ansible.builtin.command: >
         pcs resource op add
           {{ cluster_resource.resource_id }}
           {{ cluster_resource_operation.name }} {{ cluster_resource_operation.options | default([]) | join(' ') }}
-      changed_when: false
+      changed_when: "_pcs_resource_op_add.rc == 0"
