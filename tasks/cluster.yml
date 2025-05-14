@@ -42,6 +42,7 @@
           register: command_result
 
         - name: Restarting cluster service resources
+          register: command_result
           loop: "{{ pacemaker_cluster_resources }}"
           loop_control:
             loop_var: cluster_resource
@@ -49,7 +50,7 @@
           when: cluster_resource.resource_id | regex_search('^service.*')
           failed_when: false
           ansible.builtin.command: pcs resource restart {{ cluster_resource.resource_id }}
-          changed_when: "'Successfully restarted' in command_result.stdout"
+          changed_when: "command_result.rc == 0"
 
         - name: Cleaning cluster resource status
           register: _pcs_resource_cleanup

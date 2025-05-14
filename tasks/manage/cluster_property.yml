@@ -1,19 +1,23 @@
 ---
 - name: Capturing cluster property
-  register: _pcs_property_show
-  changed_when: false
-  failed_when: false
   ansible.builtin.command: pcs property show {{ cluster_property.name }}
+  register: _pcs_property_show
+  failed_when: false
+  changed_when: false
+  
 
 - name: Ensure cluster property is set
+  ansible.builtin.command: pcs property set {{ cluster_property.name }}={{ cluster_property.value | default('') }}
+  register: _pcs_property_set_result
   when:
     - cluster_property.state | default('present') | lower == 'present'
     - "(' ' ~ cluster_property.name ~ ': ' ~ cluster_property.value) not in _pcs_property_show.stdout"
-  ansible.builtin.command: pcs property set {{ cluster_property.name }}={{ cluster_property.value | default('') }}
-  changed_when: false
+  changed_when: "_pcs_property_set_result.rc == 0"
 
 - name: Ensure cluster property is not set
+  ansible.builtin.command: pcs property unset {{ cluster_property.name }}
   when:
     - cluster_property.state | default('present') | lower == 'absent'
     - "(' ' ~ cluster_property.name ~ ': ' ~ cluster_property.value) in _pcs_property_show.stdout"
-  ansible.builtin.command: pcs property unset {{ cluster_property.name }}
+  changed_when: "_pcs_property_set_result.rc == 0"
+ 
