@@ -4,7 +4,6 @@
   register: _pcs_property_show
   failed_when: false
   changed_when: false
-  
 
 - name: Ensure cluster property is set
   ansible.builtin.command: pcs property set {{ cluster_property.name }}={{ cluster_property.value | default('') }}
@@ -20,4 +19,3 @@
     - cluster_property.state | default('present') | lower == 'absent'
     - "(' ' ~ cluster_property.name ~ ': ' ~ cluster_property.value) in _pcs_property_show.stdout"
   changed_when: "_pcs_property_set_result.rc == 0"
- 
