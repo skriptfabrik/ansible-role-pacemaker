@@ -3,10 +3,12 @@
   ansible.builtin.include_tasks: capture_cluster_resource_info.yml
 
 - name: Ensure cluster resource does not exists
+  register: _pcs_resource_delete
   when:
     - cluster_resource.state | default('present') | lower == 'absent'
     - _pcs_resource_config.rc == 0
   ansible.builtin.command: pcs resource delete {{ cluster_resource.resource_id }} --force
+  changed_when: "_pcs_resource_delete.rc == 0"
 
 - name: Handle present state
   when: cluster_resource.state | default('present') | lower == 'present'
@@ -31,15 +33,21 @@
       when: _pcs_resource_config.rc == 0
       block:
         - name: Ensure cluster resource options are set properly
+          register: _pcs_resource_update
           when:
             - cluster_resource.options is defined
             - "('Attributes: ' ~ cluster_resource.options | join(' ')) not in _pcs_resource_config.stdout"
           ansible.builtin.command: pcs resource update {{ cluster_resource.resource_id }} {{ cluster_resource.options | default([]) | join(' ') }}
+          changed_when: "_pcs_resource_update.rc == 0"
+          failed_when: "_pcs_resource_update.rc != 0"
 
         - name: Ensure cluster resource operations are configured properly
           when: cluster_resource.operations is defined
           ansible.builtin.include_tasks: cluster_resource_operations.yml
 
         - name: Ensure cluster resource stickiness is configured properly
+          register: _pcs_resource_meta
           when: (' resource-stickiness=' ~ cluster_resource.stickiness | default(0)) not in _pcs_resource_config.stdout
           ansible.builtin.command: pcs resource meta {{ cluster_resource.resource_id }} resource-stickiness={{ cluster_resource.stickiness | default(0) }}
+          changed_when: "_pcs_resource_meta.rc == 0"
+          failed_when: "_pcs_resource_meta.rc != 0"
