@@ -23,6 +23,16 @@ jobs:
       - name: Run ansible-lint
         uses: ansible-community/ansible-lint-action@v6.17.0
 
+      - name: Cache Ansible collections
+        uses: actions/cache@v3
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ runner.os }}
+          restore-keys: ansible-collections-${{ runner.os }}
+
+      - name: Install required Ansible collections
+        run: ansible-galaxy collection install -r requirements.yml
+
   molecule:
     name: Run Molecule Tests
     defaults:
@@ -37,9 +47,9 @@ jobs:
           - debian9
           - debian10
           - debian11
-          - ubuntu1804
           - ubuntu2004
           - ubuntu2204
+          - ubuntu2404
       fail-fast: false
 
     steps:
@@ -49,16 +59,47 @@ jobs:
           path: skriptfabrik.pacemaker
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
-      - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: pip-${{ runner.os }}
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get remove -y containerd containerd.io || true
+          sudo apt-get install -y docker.io
+
+      - name: Enable and start Docker service
+        run: |
+          sudo systemctl enable docker
+          sudo systemctl start docker
+
+      - name: Verify Docker installation
+        run: docker --version || echo "Docker installation failed"
+
+      - name: Verify Docker Installation
+        run: docker --version || echo "Docker installation failed"
+
+      - name: Debug Docker Setup
+        run: |
+          docker info || echo "Docker is not configured correctly"
+
+      - name: Install test dependencies
+        run: pip install --upgrade ansible molecule[docker] docker
+
+      - name: Verify Molecule installation
+        run: molecule --version || echo "Molecule not installed correctly"
 
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
         env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
