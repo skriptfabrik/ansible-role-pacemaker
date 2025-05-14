@@ -10,6 +10,7 @@
     - cluster_property.state | default('present') | lower == 'present'
     - "(' ' ~ cluster_property.name ~ ': ' ~ cluster_property.value) not in _pcs_property_show.stdout"
   ansible.builtin.command: pcs property set {{ cluster_property.name }}={{ cluster_property.value | default('') }}
+  changed_when: false
 
 - name: Ensure cluster property is not set
   when:

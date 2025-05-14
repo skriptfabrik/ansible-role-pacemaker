@@ -20,6 +20,7 @@
         - name: Run test command before restart
           when: _resource.test_command is defined
           ansible.builtin.command: "{{ _resource.test_command }}"
+          changed_when: false
 
         - name: Cleanup resource status for {{ resource_name }}
           tags:

@@ -26,3 +26,4 @@
         pcs resource op add
           {{ cluster_resource.resource_id }}
           {{ cluster_resource_operation.name }} {{ cluster_resource_operation.options | default([]) | join(' ') }}
+      changed_when: false
