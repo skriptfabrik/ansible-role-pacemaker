@@ -95,7 +95,9 @@ jobs:
         run: pip install --upgrade ansible molecule[docker] docker
 
       - name: Verify Molecule installation
-        run: molecule --version || echo "Molecule not installed correctly"
+        run: |
+          molecule --version || echo "Molecule not installed correctly"
+          pip install "molecule-plugins[docker]"
 
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
