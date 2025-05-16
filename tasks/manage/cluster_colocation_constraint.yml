@@ -22,6 +22,7 @@
       with
       {{ cluster_constraint.colocation.target_resource_id }}
       {{ cluster_constraint.colocation.score | default('INFINITY') }}
+  changed_when: _pcs_colocation_constraint_show.rc != 0
 
 - name: Ensure cluster colocation constraint does not exists
   when:
@@ -31,3 +32,4 @@
     pcs constraint colocation remove
       {{ cluster_constraint.colocation.source_resource_id }}
       {{ cluster_constraint.colocation.target_resource_id }}
+  changed_when: _pcs_colocation_constraint_show.rc == 0

@@ -6,17 +6,17 @@ driver:
   name: docker
 platforms:
   - name: node1
-    image: 'geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest'
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux8}-ansible:latest"
     command: /lib/systemd/systemd
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     privileged: true
     pre_build_image: true
   - name: node2
-    image: 'geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest'
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux8}-ansible:latest"
     command: /lib/systemd/systemd
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     privileged: true
     pre_build_image: true
 scenario:
@@ -32,3 +32,8 @@ scenario:
     - side_effect
     - verify
     - destroy
+
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

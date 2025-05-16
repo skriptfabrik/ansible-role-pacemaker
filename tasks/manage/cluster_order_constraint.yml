@@ -22,3 +22,4 @@
       {{ cluster_constraint.order.second_resource_action | default('') }}
       {{ cluster_constraint.order.second_resource }}
       {{ cluster_constraint.order.options | default([]) | join(' ') }}
+  changed_when: false

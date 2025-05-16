@@ -12,16 +12,31 @@ jobs:
   lint:
     name: Lint Ansible Role
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - rockylinux8
+          - debian10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run yamllint
         uses: frenck/action-yamllint@v1
 
       - name: Run ansible-lint
         uses: ansible-community/ansible-lint-action@v6.17.0
+
+      - name: Cache Ansible collections
+        uses: actions/cache@v3
+        with:
+          path: ~/.ansible/collections
+          key: ansible-collections-${{ runner.os }}
+          restore-keys: ansible-collections-${{ runner.os }}
+
+      - name: Install required Ansible collections
+        run: ansible-galaxy collection install -r requirements.yml
 
   molecule:
     name: Run Molecule Tests
@@ -37,28 +52,70 @@ jobs:
           - debian9
           - debian10
           - debian11
-          - ubuntu1804
           - ubuntu2004
           - ubuntu2204
+          - ubuntu2404
       fail-fast: false
 
     steps:
       - name: Check out the codebase.
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: skriptfabrik.pacemaker
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
-      - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: pip-${{ runner.os }}
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get remove -y containerd containerd.io || true
+          sudo apt-get install -y docker.io
+
+      - name: Enable and start Docker service
+        run: |
+          sudo systemctl enable docker
+          sudo systemctl start docker
+      - name: Verify Docker Installation
+        run: docker --version || echo "Docker installation failed"
+
+      - name: Debug Docker Setup
+        run: |
+          docker info || echo "Docker is not configured correctly"
+
+      - name: Ensure Docker Daemon is Running
+        run: sudo systemctl status docker || echo "Docker daemon is not running"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+           python -m pip install ansible-core ansible-lint molecule==25.4.0 "molecule-plugins[docker]==23.0.0" docker flake8 flake8-bugbear flake8-docstrings flake8-import-order flake8-pylint pytest pytest-testinfra
+           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install required Ansible collections
+        run: |
+          test -f requirements.yml && ansible-galaxy collection install -r requirements.yml || echo "No requirements.yml found"
+
+      - name: Verify Installed Python Packages
+        run: pip list | grep -E "ansible|molecule|docker"
+
+      - name: Verify Molecule installation
+        run: |
+          molecule --version || echo "Molecule not installed correctly"
+          pip list | grep molecule
 
       - name: Run Molecule tests.
-        run: pwd; ls -la; molecule test
+        run: molecule test
         env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: "1"
+          ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
+          working-directory: skriptfabrik.pacemaker

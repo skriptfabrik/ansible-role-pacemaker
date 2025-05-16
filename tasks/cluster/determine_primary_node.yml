@@ -12,22 +12,25 @@
   block:
     - name: Fetch node name from resource status
       changed_when: false
-      register: _recource_node
+      register: _resource_node
       failed_when: false
       args:
         executable: /bin/bash
       ansible.builtin.shell: |
-        set -o pipefail
-        pcs resource {{'show' if _pcs_version.stdout is version('0.10.0', '<') else 'status'}} \
-          | head -n1 | rev | cut -d ' ' -f1 | rev
+       set -o pipefail
+       pcs resource {{ 'show' if _pcs_version.stdout is version('0.10.0', '<') else 'status' }}
+
+    - name: Debug extracted node
+      ansible.builtin.debug:
+        msg: "Extracted node: {{ _resource_node.stdout }}"
 
     - name: Update primary server variabel
       when:
-        - _recource_node.rc == 0
-        - _recource_node.stdout in hostvars.keys()
+        - _resource_node.rc == 0
+        - _resource_node.stdout in hostvars.keys()
       changed_when: false
       ansible.builtin.set_fact:
-        pacemaker_primary_server: "{{ _recource_node.stdout }}"
+        pacemaker_primary_server: "{{ _resource_node.stdout }}"
 
 - name: Show primary node value
   ansible.builtin.debug:
