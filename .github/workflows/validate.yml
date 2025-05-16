@@ -12,6 +12,11 @@ jobs:
   lint:
     name: Lint Ansible Role
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - rockylinux8
+          - debian10
 
     steps:
       - name: Checkout code
@@ -59,7 +64,7 @@ jobs:
           path: skriptfabrik.pacemaker
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v2
         with:
           python-version: "3.x"
 
@@ -80,10 +85,6 @@ jobs:
         run: |
           sudo systemctl enable docker
           sudo systemctl start docker
-
-      - name: Verify Docker installation
-        run: docker --version || echo "Docker installation failed"
-
       - name: Verify Docker Installation
         run: docker --version || echo "Docker installation failed"
 
@@ -91,17 +92,30 @@ jobs:
         run: |
           docker info || echo "Docker is not configured correctly"
 
-      - name: Install test dependencies
-        run: pip install --upgrade ansible molecule[docker] docker
+      - name: Ensure Docker Daemon is Running
+        run: sudo systemctl status docker || echo "Docker daemon is not running"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+           python -m pip install ansible-core ansible-lint molecule==25.4.0 "molecule-plugins[docker]==23.0.0" docker flake8 flake8-bugbear flake8-docstrings flake8-import-order flake8-pylint pytest pytest-testinfra
+           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install required Ansible collections
+        run: |
+          test -f requirements.yml && ansible-galaxy collection install -r requirements.yml || echo "No requirements.yml found"
+
+      - name: Verify Installed Python Packages
+        run: pip list | grep -E "ansible|molecule|docker"
 
       - name: Verify Molecule installation
         run: |
           molecule --version || echo "Molecule not installed correctly"
-          pip install "molecule-plugins[docker]"
+          pip list | grep molecule
 
       - name: Run Molecule tests.
-        run: pwd; ls -la; molecule test
+        run: molecule test
         env:
           PY_COLORS: "1"
           ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
+          working-directory: skriptfabrik.pacemaker
