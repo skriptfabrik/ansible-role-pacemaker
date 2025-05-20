@@ -98,6 +98,7 @@ jobs:
         run: |
           molecule --version || echo "Molecule not installed correctly"
           pip install "molecule-plugins[docker]"
+          pip install "molecule-plugins[lint,docker]"
 
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
