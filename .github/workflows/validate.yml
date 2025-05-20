@@ -33,6 +33,9 @@ jobs:
       - name: Install required Ansible collections
         run: ansible-galaxy collection install -r requirements.yml
 
+      - name: Set Ansible temp directory
+        run: echo "remote_tmp = /tmp/ansible" >> ansible.cfg
+
   molecule:
     name: Run Molecule Tests
     defaults:
@@ -84,22 +87,21 @@ jobs:
       - name: Verify Docker installation
         run: docker --version || echo "Docker installation failed"
 
-      - name: Verify Docker Installation
-        run: docker --version || echo "Docker installation failed"
-
       - name: Debug Docker Setup
         run: |
           docker info || echo "Docker is not configured correctly"
 
       - name: Install test dependencies
-        run: pip install --upgrade ansible molecule[docker] docker
-
-      - name: Verify Molecule installation
         run: |
-          molecule --version || echo "Molecule not installed correctly"
           pip install "molecule-plugins[docker]"
-          pip install "molecule-plugins[lint,docker]"
-
+          pip install --upgrade ansible "molecule[docker]" docker
+          pip install "molecule-plugins[lint]"
+      - name: Verify Molecule plugins installation
+        run: |
+          molecule --version
+          molecule lint --help || echo "Lint plugin is not installed correctly"
+      - name: Run Molecule tests with debugging
+        run: molecule --debug test
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
         env:
