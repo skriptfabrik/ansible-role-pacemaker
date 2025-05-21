@@ -100,8 +100,6 @@ jobs:
         run: |
           molecule --version
           molecule lint --help || echo "Lint plugin is not installed correctly"
-      - name: Run Molecule tests with debugging
-        run: molecule --debug test
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
         env:
