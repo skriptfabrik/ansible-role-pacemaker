@@ -1,0 +1,29 @@
+---
+- name: Install Pacemaker
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Pacemaker on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: pacemaker
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Pacemaker on RHEL/CentOS
+      ansible.builtin.dnf:
+        name: pacemaker
+        state: present
+      when: ansible_os_family == "RedHat"
+
+- name: Verify Pacemaker service is running
+  hosts: all
+  become: true
+  tasks:
+    - name: Check Pacemaker service status
+      ansible.builtin.command: systemctl status pacemaker
+      register: pacemaker_status
+      changed_when: false
+
+    - name: Display Pacemaker status
+      ansible.builtin.debug:
+        var: pacemaker_status.stdout
