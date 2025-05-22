@@ -33,9 +33,6 @@ jobs:
       - name: Install required Ansible collections
         run: ansible-galaxy collection install -r requirements.yml
 
-      - name: Set Ansible temp directory
-        run: echo "remote_tmp = /tmp/ansible" >> ansible.cfg
-
   molecule:
     name: Run Molecule Tests
     defaults:
@@ -91,6 +88,10 @@ jobs:
         run: |
           docker info || echo "Docker is not configured correctly"
 
+      - name: Debug Environment Variables
+        run: |
+          echo "ANSIBLE_REMOTE_TEMP=${ANSIBLE_REMOTE_TEMP}"
+
       - name: Install test dependencies
         run: |
           pip install "molecule-plugins[docker]"
@@ -100,9 +101,21 @@ jobs:
         run: |
           molecule --version
           molecule lint --help || echo "Lint plugin is not installed correctly"
+
+      - name: Ensure Ansible temp directory is correctly set
+        run: |
+          echo -e "[defaults]\nremote_tmp = /tmp/ansible" > ansible.cfg
+
+      - name: Confirm Ansible Configuration
+        run: ansible-config dump
+
+      - name: Export ANSIBLE_REMOTE_TEMP
+        run: |
+          echo "ANSIBLE_REMOTE_TEMP=/tmp/ansible" >> $GITHUB_ENV
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
         env:
           PY_COLORS: "1"
           ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
+          ANSIBLE_REMOTE_TEMP: /tmp/ansible
