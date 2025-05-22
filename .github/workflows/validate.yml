@@ -88,30 +88,32 @@ jobs:
         run: |
           docker info || echo "Docker is not configured correctly"
 
-      - name: Debug Environment Variables
-        run: |
-          echo "ANSIBLE_REMOTE_TEMP=${ANSIBLE_REMOTE_TEMP}"
-
       - name: Install test dependencies
         run: |
-          pip install "molecule-plugins[docker]"
+          python -m pip install --upgrade pip
+          pip install "molecule-plugins[docker]" "molecule-plugins[lint]"
           pip install --upgrade ansible "molecule[docker]" docker
-          pip install "molecule-plugins[lint]"
       - name: Verify Molecule plugins installation
         run: |
           molecule --version
           molecule lint --help || echo "Lint plugin is not installed correctly"
-
-      - name: Ensure Ansible temp directory is correctly set
+          pip install "molecule-plugins[lint]"
+      - name: Ensure /tmp/ansible exists on GitHub runner
         run: |
-          echo -e "[defaults]\nremote_tmp = /tmp/ansible" > ansible.cfg
-
-      - name: Confirm Ansible Configuration
-        run: ansible-config dump
-
+          sudo mkdir -p /tmp/ansible
+          sudo chmod 1777 /tmp/ansible
       - name: Export ANSIBLE_REMOTE_TEMP
         run: |
           echo "ANSIBLE_REMOTE_TEMP=/tmp/ansible" >> $GITHUB_ENV
+
+      - name: Debug Environment Variables
+        run: |
+          echo "ANSIBLE_REMOTE_TEMP=${ANSIBLE_REMOTE_TEMP}"
+          ansible-config dump
+
+      - name: List Molecule Instances
+        run: molecule list
+
       - name: Run Molecule tests.
         run: pwd; ls -la; molecule test
         env:
