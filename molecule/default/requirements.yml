@@ -1,7 +1,0 @@
----
-roles:
-  - name: skriptfabrik.pacemaker
-    src: https://github.com/skriptfabrik/ansible-role-pacemaker.git
-collections:
-  - name: ansible.posix
-  - name: community.general
