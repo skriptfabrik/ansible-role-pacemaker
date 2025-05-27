@@ -28,9 +28,6 @@ jobs:
       - name: Run ansible-lint
         uses: ansible-community/ansible-lint-action@v6.17.0
 
-      - name: Set Permissions for TMP
-        run: sudo chmod 1777 /tmp
-
       - name: Cache Ansible collections
         uses: actions/cache@v3
         with:
