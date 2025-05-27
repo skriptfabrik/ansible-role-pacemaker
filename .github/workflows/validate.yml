@@ -120,7 +120,7 @@ jobs:
         run: sudo chmod -R 777 /tmp/ansible
 
       - name: Run Molecule tests.
-        run: pwd; ls -la; molecule test -- -vvv
+        run: pwd; ls -la; molecule test
         env:
           PY_COLORS: "1"
           ANSIBLE_FORCE_COLOR: "1"
