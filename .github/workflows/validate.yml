@@ -18,7 +18,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Permissions for TMP
-        run: sudo mkdir -p /tmp/ansible_tmp && sudo chmod 1777 /tmp/ansible_tmp
+        run: |
+          sudo mkdir -p /tmp/ansible_tmp
+          sudo chmod 1777 /tmp /tmp/ansible_tmp
+
       - name: Run yamllint
         uses: frenck/action-yamllint@v1
 
