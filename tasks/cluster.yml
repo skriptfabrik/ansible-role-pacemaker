@@ -47,7 +47,9 @@
           loop_control:
             loop_var: cluster_resource
             label: "{{ cluster_resource.resource_id }}"
-          when: cluster_resource.resource_id | regex_search('^service.*') is not none
+          when:
+            - cluster_resource.resource_id is defined
+            - cluster_resource.resource_id is match("^service.*")
           failed_when: false
           ansible.builtin.command: pcs resource restart {{ cluster_resource.resource_id }}
           changed_when: "command_result.rc == 0"
