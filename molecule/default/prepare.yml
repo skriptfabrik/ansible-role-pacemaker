@@ -7,4 +7,4 @@
         name:
           - nginx
         update_cache: true
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
