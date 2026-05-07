@@ -42,7 +42,7 @@ jobs:
     name: Run Molecule Tests
     defaults:
       run:
-        working-directory: skriptfabrik.pacemaker
+        working-directory: ~/.ansible/roles/skriptfabrik.pacemaker
     needs:
       - lint
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v4
         with:
-          path: skriptfabrik.pacemaker
+          path: ~/.ansible/roles/skriptfabrik.pacemaker
 
       - name: Set up Python 3.
         uses: actions/setup-python@v5
