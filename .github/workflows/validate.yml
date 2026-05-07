@@ -26,7 +26,7 @@ jobs:
         uses: frenck/action-yamllint@v1
 
       - name: Run ansible-lint
-        uses: ansible-community/ansible-lint-action@v6.17.0
+        uses: ansible/ansible-lint@v26
 
       - name: Cache Ansible collections
         uses: actions/cache@v4
