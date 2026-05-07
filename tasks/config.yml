@@ -1,7 +1,7 @@
 ---
 - name: Setting facts
   ansible.builtin.set_fact:
-    corosync_bindnet_addr: "{{ hostvars[inventory_hostname]['ansible_' + corosync_bindnet_interface]['ipv4']['address'] }}"
+    corosync_bindnet_addr: "{{ ansible_facts[corosync_bindnet_interface]['ipv4']['address'] }}"
 
 - name: Capturing corosync auth key
   when: inventory_hostname == pacemaker_primary_server
@@ -26,7 +26,7 @@
         dest: "{{ corosync_authkey_file }}"
         owner: root
         group: root
-        mode: 0600
+        mode: "0600"
 
 - name: Configuring corosync
   notify:
@@ -38,7 +38,7 @@
     dest: "{{ corosync_config_file }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Configuring corosync service to start
   notify:
@@ -49,7 +49,7 @@
     dest: /etc/default/corosync
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Force handlers to run
   ansible.builtin.meta: flush_handlers
