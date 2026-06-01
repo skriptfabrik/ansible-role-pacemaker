@@ -1,6 +1,7 @@
 # Ansible Role: pacemaker
 
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-sshd-blue.svg?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker) [![Ansible Role](https://img.shields.io/ansible/role/d/59509.svg?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker)
+[![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-pacemaker-blue.svg?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker)
+[![Ansible Role](https://img.shields.io/ansible/role/d/skriptfabrik/pacemaker?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker)
 
 ## Description
 
