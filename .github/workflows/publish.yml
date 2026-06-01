@@ -1,4 +1,3 @@
----
 name: Publish Role on Ansible Galaxy
 
 on:
@@ -15,7 +14,7 @@ jobs:
 
     steps:
       - name: galaxy
-        uses: robertdebock/galaxy-action@1.2.1
+        uses: robertdebock/galaxy-action@7d89099e09f4385ec4b53eb58c0d120f1ad806dd # v1.2.1
         with:
           galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
           git_branch: main
