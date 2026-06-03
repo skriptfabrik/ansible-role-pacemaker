@@ -49,12 +49,13 @@ jobs:
     strategy:
       matrix:
         distro:
-          - debian10
           - debian11
           - debian12
+          - debian13
           - ubuntu2004
           - ubuntu2204
           - ubuntu2404
+          - ubuntu2604
       fail-fast: false
 
     steps:
