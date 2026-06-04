@@ -1,6 +1,7 @@
 ---
-- name: First Converge
+- name: Converge 1
   hosts: all
+  become: true
   vars:
     pacemaker_cluster_group: all
     corosync_bindnet_interface: eth0
@@ -62,8 +63,9 @@
   roles:
     - role: skriptfabrik.pacemaker
 
-- name: Second Converge
+- name: Converge 2
   hosts: all
+  become: true
   vars:
     pacemaker_cluster_group: all
     corosync_bindnet_interface: eth0

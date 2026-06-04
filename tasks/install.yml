@@ -1,16 +1,38 @@
 ---
-- name: Install ha manager
+- name: Install base packages
   ansible.builtin.apt:
     name:
       - cluster-glue
       - corosync
       - crmsh
-      - fence-agents
       - pacemaker
       - pcs
-      - resource-agents
-    state: present
     update_cache: true
+
+- name: Install fence-agents and resource-agents (legacy)
+  when: >
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int < 22) or
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version | int <= 12)
+  ansible.builtin.apt:
+    name:
+      - fence-agents
+      - resource-agents
+
+- name: Install fence-agents-base and resource-agents-base (>= Ubuntu 22)
+  when: >
+    ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int >= 22
+  ansible.builtin.apt:
+    name:
+      - fence-agents-base
+      - resource-agents-base
+
+- name: Install fence-agents-all and resource-agents (Debian 13+)
+  when: >
+    ansible_distribution == 'Debian' and ansible_distribution_major_version | int >= 13
+  ansible.builtin.apt:
+    name:
+      - fence-agents-all
+      - resource-agents
 
 - name: Looking for existing {{ corosync_authkey_file }}
   ansible.builtin.stat:
