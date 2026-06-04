@@ -1,10 +1,9 @@
 ---
 - name: Prepare
   hosts: all
+  become: true
   tasks:
-    - name: Install nginx on Debian/Ubuntu
+    - name: Install nginx
       ansible.builtin.apt:
-        name:
-          - nginx
+        name: nginx
         update_cache: true
-      when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
