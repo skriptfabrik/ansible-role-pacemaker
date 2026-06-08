@@ -1,20 +1,21 @@
-name: Publish Role on Ansible Galaxy
+name: Publish
 
 on:
   push:
-    branches:
-      - main
     tags:
-      - '*'
+      - "*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  import:
-    name: Publish Role on Ansible Galaxy
+  publish:
+    name: Publish Ansible Role
     runs-on: ubuntu-latest
 
     steps:
-      - name: galaxy
+      - name: Publish
         uses: robertdebock/galaxy-action@7d89099e09f4385ec4b53eb58c0d120f1ad806dd # v1.2.1
         with:
           galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
-          git_branch: main
