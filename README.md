@@ -2,6 +2,7 @@
 
 [![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-pacemaker-blue.svg?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker)
 [![Ansible Role](https://img.shields.io/ansible/role/d/skriptfabrik/pacemaker?style=popout-square)](https://galaxy.ansible.com/skriptfabrik/pacemaker)
+[![Publish](https://github.com/skriptfabrik/ansible-role-pacemaker/actions/workflows/publish.yml/badge.svg)](https://github.com/skriptfabrik/ansible-role-pacemaker/actions/workflows/publish.yml)
 
 ## Description
 
