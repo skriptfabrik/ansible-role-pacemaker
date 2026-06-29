@@ -62,14 +62,16 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Cache Ansible collections
+        id: ansible-collections
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.ansible/collections
-          key: ${{ runner.os }}-ansible-deps-${{ hashFiles('requirements.yml') }}
+          key: ${{ runner.os }}-ansible-collections-${{ hashFiles('requirements.yml') }}
           restore-keys: |
-            ${{ runner.os }}-ansible-deps-
+            ${{ runner.os }}-ansible-collections-
 
       - name: Install Ansible collections
+        if: steps.ansible-collections.outputs.cache-hit != 'true'
         run: ansible-galaxy collection install -r requirements.yml
 
       - name: Run Molecule tests
