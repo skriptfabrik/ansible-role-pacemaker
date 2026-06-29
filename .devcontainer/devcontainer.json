@@ -3,7 +3,7 @@
   "name": "ansible-role-pacemaker",
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-24.04",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:3": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
       "version": "latest"
     },
     "ghcr.io/devcontainers-extra/features/mise:1": {
