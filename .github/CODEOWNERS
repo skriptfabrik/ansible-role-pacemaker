@@ -14,6 +14,7 @@
 /vars/                  @skriptfabrik/ansible-maintainers
 .ansible-lint           @skriptfabrik/ansible-maintainers
 ansible.cfg             @skriptfabrik/ansible-maintainers
+requirements.yml        @skriptfabrik/ansible-maintainers
 
 # Pip files
 .python-version         @skriptfabrik/pip-maintainers
