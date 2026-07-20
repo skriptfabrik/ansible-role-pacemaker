@@ -3,7 +3,7 @@
 set -e
 
 # Change ownership of the local data volume mount to the current user
-sudo chown $(id -u):$(id -g) ~/.ansible ~/.ansible/collections ~/.local
+sudo chown $(id -u):$(id -g) ~/.ansible ~/.local
 
 # Update mise to the latest version
 sudo mise self-update --yes

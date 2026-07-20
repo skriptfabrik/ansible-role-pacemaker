@@ -1,8 +1,4 @@
 ---
-dependency:
-  name: galaxy
-  requirements-file: requirements.yml
-
 driver:
   name: docker
 
