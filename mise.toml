@@ -1,17 +1,20 @@
 [settings]
 idiomatic_version_file_enable_tools = ["python"]
 
+[tools]
+uv = "latest"
+
 [tasks.install]
 description = "Install dependencies"
-depends = ["pip-install", "ansible-install"]
+depends = ["python-install", "ansible-install"]
 
-[tasks.pip-install]
+[tasks.python-install]
 description = "Install Python packages"
-run = "pip install -r requirements.txt"
-sources = ["mise.toml", "requirements.txt"]
+run = "uv sync --frozen"
+sources = ["mise.toml", "pyproject.toml", "uv.lock"]
 
 [tasks.ansible-install]
 description = "Install Ansible collections"
-depends = ["pip-install"]
-run = "ansible-galaxy collection install -r requirements.yml"
+depends = ["python-install"]
+run = "uv run ansible-galaxy collection install -r requirements.yml"
 sources = ["mise.toml", "requirements.yml"]

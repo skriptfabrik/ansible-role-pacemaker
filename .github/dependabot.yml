@@ -12,9 +12,3 @@ updates:
     schedule:
       interval: 'weekly'
       day: 'sunday'
-
-  - package-ecosystem: 'pip'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'

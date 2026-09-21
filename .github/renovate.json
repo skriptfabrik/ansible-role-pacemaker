@@ -1,12 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [":gitSignOff"],
-  "enabledManagers": ["ansible-galaxy"],
+  "enabledManagers": ["ansible-galaxy", "pep621"],
   "labels": ["dependencies"],
   "packageRules": [
     {
       "matchManagers": ["ansible-galaxy"],
       "addLabels": ["ansible_galaxy"],
+      "schedule": ["* * * * 0"]
+    },
+    {
+      "matchManagers": ["pep621"],
+      "addLabels": ["python"],
       "schedule": ["* * * * 0"]
     }
   ]
