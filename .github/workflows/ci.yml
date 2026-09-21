@@ -12,6 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint Ansible Role
@@ -20,6 +23,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup uv
         uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v9.1.0
@@ -48,6 +53,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup uv
         uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v9.1.0
@@ -57,17 +64,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
-      - name: Cache Ansible collections
-        id: ansible-collections
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.ansible/collections
-          key: ${{ runner.os }}-ansible-collections-${{ hashFiles('requirements.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-ansible-collections-
-
       - name: Install Ansible collections
-        if: steps.ansible-collections.outputs.cache-hit != 'true'
         run: uv run ansible-galaxy collection install -r requirements.yml
 
       - name: Run Molecule tests
