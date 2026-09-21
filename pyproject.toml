@@ -1,0 +1,17 @@
+[project]
+name = "ansible-role-pacemaker"
+version = "0.0.0"
+authors = [
+  { name = "skriptfabrik GmbH" }
+]
+requires-python = ">=3.14.6"
+dependencies = [
+    "ansible-core==2.21.4",
+    "ansible-lint==26.8.0",
+    "docker==7.2.0",
+    "molecule==26.8.0",
+    "molecule-plugins[docker]==26.7.15",
+]
+
+[tool.uv]
+package = false

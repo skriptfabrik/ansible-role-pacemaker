@@ -18,4 +18,5 @@ requirements.yml        @skriptfabrik/ansible-maintainers
 
 # Pip files
 .python-version         @skriptfabrik/pip-maintainers
-requirements*.txt       @skriptfabrik/pip-maintainers
+pyproject.toml          @skriptfabrik/pip-maintainers
+uv.lock                 @skriptfabrik/pip-maintainers

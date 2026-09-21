@@ -21,18 +21,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Setup uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v9.1.0
         with:
-          python-version-file: .python-version
-          cache: pip
-          cache-dependency-path: requirements.txt
+          enable-cache: true
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: uv sync --frozen
 
       - name: Lint Ansible files with ansible-lint
-        run: ansible-lint
+        run: uv run ansible-lint
 
   test:
     name: Test Ansible Role
@@ -51,15 +49,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Setup uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v9.1.0
         with:
-          python-version-file: .python-version
-          cache: pip
-          cache-dependency-path: requirements.txt
+          enable-cache: true
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: uv sync --frozen
 
       - name: Cache Ansible collections
         id: ansible-collections
@@ -72,10 +68,10 @@ jobs:
 
       - name: Install Ansible collections
         if: steps.ansible-collections.outputs.cache-hit != 'true'
-        run: ansible-galaxy collection install -r requirements.yml
+        run: uv run ansible-galaxy collection install -r requirements.yml
 
       - name: Run Molecule tests
         env:
           ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.distro }}
-        run: molecule test
+        run: uv run molecule test
