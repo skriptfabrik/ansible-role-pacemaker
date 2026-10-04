@@ -10,7 +10,7 @@ dependencies = [
     "ansible-lint==26.9.0",
     "docker==7.2.0",
     "molecule==26.9.0",
-    "molecule-plugins[docker]==26.7.15",
+    "molecule-plugins[docker]==26.9.28",
 ]
 
 [tool.uv]
