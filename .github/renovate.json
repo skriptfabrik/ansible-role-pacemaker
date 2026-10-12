@@ -31,5 +31,6 @@
     }
   ],
   "prConcurrentLimit": 100,
-  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}"
+  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
+  "timezone": "Europe/Berlin"
 }
