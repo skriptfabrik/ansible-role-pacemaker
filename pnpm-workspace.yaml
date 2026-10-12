@@ -1,0 +1,12 @@
+allowBuilds:
+  lefthook: false
+
+# node_modules is shared between the macOS host and the Linux devcontainer,
+# so install native binaries (e.g. lefthook) for both platforms.
+supportedArchitectures:
+  os:
+    - current
+    - darwin
+    - linux
+  cpu:
+    - current

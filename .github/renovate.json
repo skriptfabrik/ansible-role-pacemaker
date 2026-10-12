@@ -5,6 +5,7 @@
     "ansible-galaxy",
     "devcontainer",
     "github-actions",
+    "npm",
     "pep621"
   ],
   "labels": ["dependencies"],
@@ -23,6 +24,11 @@
       "matchManagers": ["github-actions"],
       "addLabels": ["github_actions"],
       "schedule": ["* * * * 0"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "addLabels": ["javascript"],
+      "schedule": ["* * * * 1"]
     },
     {
       "matchManagers": ["pep621"],

@@ -1,12 +1,17 @@
 [settings]
-idiomatic_version_file_enable_tools = ["python"]
+idiomatic_version_file_enable_tools = ["node", "pnpm", "python"]
+
+[env]
+_.path = ["{{config_root}}/node_modules/.bin"]
+PNPM_CONFIG_STORE_DIR = "~/.local/share/pnpm/store"
+UV_LINK_MODE = "copy"
 
 [tools]
 uv = "latest"
 
 [tasks.install]
 description = "Install dependencies"
-depends = ["python-install", "ansible-install"]
+depends = ["python-install", "ansible-install", "pnpm-install"]
 
 [tasks.python-install]
 description = "Install Python packages"
@@ -18,3 +23,10 @@ description = "Install Ansible collections"
 depends = ["python-install"]
 run = "uv run ansible-galaxy collection install -r requirements.yml"
 sources = ["mise.toml", "requirements.yml"]
+
+[tasks.pnpm-install]
+description = "Install Node.js packages"
+depends = ["python-install"]
+run = "pnpm install"
+sources = ["mise.toml", "package.json", "pnpm-lock.yaml"]
+outputs = ["node_modules/.pnpm/lock.yaml"]

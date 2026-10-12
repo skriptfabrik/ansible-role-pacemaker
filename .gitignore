@@ -1,1 +1,3 @@
+.ansible/
 .venv/
+node_modules/
