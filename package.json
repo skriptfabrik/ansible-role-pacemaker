@@ -1,0 +1,22 @@
+{
+  "name": "ansible-role-pacemaker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "lefthook": "^2.1.16",
+    "prettier": "^3.9.9"
+  },
+  "packageManager": "pnpm@12.11.2",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.21.0",
+      "onFail": "download"
+    }
+  }
+}

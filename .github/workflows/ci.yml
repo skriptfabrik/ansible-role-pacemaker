@@ -16,8 +16,53 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint Ansible Role
+  lint-commit-messages:
+    name: Lint Commit Messages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js and pnpm
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+        with:
+          cache: true
+
+      - name: Lint commit messages
+        run: |
+          pnpm -s exec commitlint \
+            --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} \
+            --to ${{ github.event.pull_request.head.sha }}
+          echo "Commit messages linting passed"
+
+  lint-prettier-files:
+    name: Lint Prettier Files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js and pnpm
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+        with:
+          cache: true
+
+      - name: Lint files with Prettier
+        run: pnpm -s exec prettier --check --ignore-unknown .
+
+  lint-ansible-files:
+    name: Lint Ansible Files
     runs-on: ubuntu-latest
 
     steps:

@@ -1,0 +1,32 @@
+glob_matcher: doublestar
+
+# Run all jobs inside the mise environment (tools + env), so hooks also work
+# from shells/GUIs where mise is not activated. Missing tools are installed.
+templates:
+  ansible-lint: mise exec -- uv run ansible-lint --
+  pnpm-exec: mise exec -- pnpm -s exec
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: "{pnpm-exec} commitlint --edit {1}"
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: ansible-lint
+      glob:
+        - "defaults/**"
+        - "handlers/**"
+        - "meta/**"
+        - "molecule/**"
+        - "src/**"
+        - "tasks/**"
+        - "templates/**"
+        - "vars/**"
+        - "requirements.yml"
+      run: "{ansible-lint} {staged_files}"
+
+    - name: prettier
+      glob: "**/*.{cjs,js,json,md,mjs,yaml,yml}"
+      run: "{pnpm-exec} prettier --check --ignore-unknown {staged_files}"
