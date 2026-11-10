@@ -4,22 +4,36 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-24.04",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:4": {
-      "version": "latest"
+      "version": "29.9.2"
     },
     "ghcr.io/devcontainers-extra/features/mise:1": {
-      "version": "latest"
+      "version": "2026.10.20"
     }
   },
   "customizations": {
     "vscode": {
       "extensions": [
+        "anthropic.claude-code",
         "editorconfig.editorconfig",
+        "github.copilot",
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
         "hverlin.mise-vscode",
         "redhat.ansible",
         "tamasfe.even-better-toml"
-      ]
+      ],
+      "settings": {
+        "python": {
+          "terminal": {
+            "activateEnvironment": false
+          }
+        },
+        "python-envs": {
+          "terminal": {
+            "autoActivationType": "off"
+          }
+        }
+      }
     }
   },
   "mounts": [
@@ -29,15 +43,52 @@
       "type": "volume"
     },
     {
-      "source": "vscode-local-data",
-      "target": "/home/vscode/.local",
+      "source": "vscode-cache-mise",
+      "target": "/home/vscode/.cache/mise",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-cache-pnpm",
+      "target": "/home/vscode/.cache/pnpm",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-claude",
+      "target": "/home/vscode/.claude",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-config-gh",
+      "target": "/home/vscode/.config/gh",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-local-share-mise",
+      "target": "/home/vscode/.local/share/mise",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-local-share-pnpm",
+      "target": "/home/vscode/.local/share/pnpm",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-node-modules-${devcontainerId}",
+      "target": "${containerWorkspaceFolder}/node_modules",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-venv-${devcontainerId}",
+      "target": "${containerWorkspaceFolder}/.venv",
       "type": "volume"
     }
   ],
   "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
     "MISE_TRUSTED_CONFIG_PATHS": "${containerWorkspaceFolder}"
   },
   "remoteEnv": {
+    "MISE_EXPERIMENTAL": "true",
     "MISE_LOCKFILE": "true"
   },
   "onCreateCommand": ".devcontainer/hooks/on-create.sh",
