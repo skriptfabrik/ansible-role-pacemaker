@@ -1,9 +1,3 @@
-# GitHub Actions files
-/.github/               @skriptfabrik/github-actions-maintainers
-
-# Devcontainer configuration
-/.devcontainer/         @skriptfabrik/devcontainer-maintainers
-
 # Ansible files
 /defaults/              @skriptfabrik/ansible-maintainers
 /handlers/              @skriptfabrik/ansible-maintainers
@@ -15,6 +9,21 @@
 .ansible-lint           @skriptfabrik/ansible-maintainers
 ansible.cfg             @skriptfabrik/ansible-maintainers
 requirements.yml        @skriptfabrik/ansible-maintainers
+
+# Devcontainer configuration
+/.devcontainer/         @skriptfabrik/devcontainer-maintainers
+
+# GitHub Actions files
+/.github/               @skriptfabrik/github-actions-maintainers
+
+# Mise tools and configurations
+mise.lock               @skriptfabrik/mise-maintainers
+mise.toml               @skriptfabrik/mise-maintainers
+
+# NPM package files
+package.json            @skriptfabrik/npm-maintainers
+pnpm-lock.yaml          @skriptfabrik/npm-maintainers
+pnpm-workspace.yaml     @skriptfabrik/npm-maintainers
 
 # Pip files
 .python-version         @skriptfabrik/pip-maintainers
