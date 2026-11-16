@@ -1,48 +1,75 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [":gitSignOff"],
+  "extends": [
+    "config:recommended",
+    ":disableRateLimiting",
+    ":gitSignOff",
+    ":semanticCommits",
+    ":semanticPrefixChore",
+    ":semanticCommitScopeDisabled"
+  ],
+  "labels": ["dependencies"],
+  "timezone": "Europe/Berlin",
   "enabledManagers": [
     "ansible-galaxy",
     "devcontainer",
     "github-actions",
+    "mise",
     "npm",
     "pep621"
   ],
-  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
+      "description": "Ansible Galaxy dependencies are updated on Sundays",
       "matchManagers": ["ansible-galaxy"],
       "addLabels": ["ansible_galaxy"],
       "schedule": ["* * * * 0"]
     },
     {
+      "description": "Devcontainer updates are applied on Sundays",
       "matchManagers": ["devcontainer"],
       "addLabels": ["devcontainer"],
       "schedule": ["* * * * 0"]
     },
     {
+      "description": "GitHub Actions are updated on Sundays",
       "matchManagers": ["github-actions"],
       "addLabels": ["github_actions"],
       "schedule": ["* * * * 0"]
     },
     {
+      "description": "Tools pinned via mise are updated on Sundays",
+      "matchManagers": ["mise"],
+      "addLabels": ["mise"],
+      "schedule": ["* * * * 0"]
+    },
+    {
+      "description": "JavaScript dependencies are updated on Mondays once released for a day",
       "matchManagers": ["npm"],
       "addLabels": ["javascript"],
       "minimumReleaseAge": "1 day",
       "schedule": ["* * * * 1"]
     },
     {
-      "matchManagers": ["npm"],
-      "matchPackageNames": ["@commitlint/*"],
-      "groupName": "commitlint"
-    },
-    {
+      "description": "Python dependencies are updated on Mondays",
       "matchManagers": ["pep621"],
       "addLabels": ["python"],
       "schedule": ["* * * * 1"]
+    },
+    {
+      "description": "Lock file maintenance runs early on Mondays without a release age",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null,
+      "schedule": ["* 0-3 * * 1"]
+    },
+    {
+      "description": "Commitlint npm dependencies are grouped under 'commitlint'",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@commitlint/*"],
+      "groupName": "commitlint"
     }
-  ],
-  "prConcurrentLimit": 100,
-  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
-  "timezone": "Europe/Berlin"
+  ]
 }

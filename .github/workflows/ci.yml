@@ -18,6 +18,7 @@ permissions:
 jobs:
   lint-commit-messages:
     name: Lint Commit Messages
+    if: ${{ github.actor != 'renovate[bot]' && github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
