@@ -5,7 +5,7 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:4": {
       // renovate: datasource=github-tags depName=docker/cli
-      "version": "29.9.2"
+      "version": "29.10.0"
     },
     "ghcr.io/devcontainers-extra/features/mise:1": {
       // renovate: datasource=github-releases depName=jdx/mise
