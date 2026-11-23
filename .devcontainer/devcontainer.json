@@ -4,6 +4,7 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-24.04",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "moby": false,
       // renovate: datasource=github-tags depName=docker/cli
       "version": "29.10.0"
     },
