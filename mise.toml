@@ -9,7 +9,7 @@ UV_LINK_MODE = "copy"
 
 [tools]
 gh = "2.105.0"
-uv = "0.13.7"
+uv = "0.13.9"
 
 [tasks.install]
 description = "Install dependencies"
