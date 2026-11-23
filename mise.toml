@@ -8,7 +8,7 @@ PNPM_CONFIG_STORE_DIR = "~/.local/share/pnpm/store"
 UV_LINK_MODE = "copy"
 
 [tools]
-gh = "2.103.3"
+gh = "2.105.0"
 uv = "0.13.7"
 
 [tasks.install]
